@@ -1,0 +1,111 @@
+<configs>
+	<!-- Parents. Children that Extends these pick up Class, power, and the POI mode. -->
+	<!-- gated: one-shot, stays dark until another trigger enables it (powerSwitch). -->
+	<!-- repeat: press again (push buttons). -->
+	<!-- single: one-shot, no enable gate (pipe valve switches). -->
+
+	<set xpath="/blocks/block[@name='powerSwitch01']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='powerSwitch01']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<append xpath="/blocks/block[@name='powerSwitch01']">
+		<property name="CreativeMode" value="Player" />
+		<property name="HSUnlockPoi" value="gated" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<set xpath="/blocks/block[@name='pushButtonSwitch01']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='pushButtonSwitch01']/property[@name='CreativeMode']/@value">Player</set>
+	<set xpath="/blocks/block[@name='pushButtonSwitch01']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<set xpath="/blocks/block[@name='pushButtonSwitch02']/property[@name='CreativeMode']/@value">Player</set>
+	<append xpath="/blocks/block[@name='pushButtonSwitch01']">
+		<property name="HSUnlockPoi" value="repeat" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<set xpath="/blocks/block[@name='pipeSmallValveSwitch']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='pipeSmallValveSwitch']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<append xpath="/blocks/block[@name='pipeSmallValveSwitch']">
+		<property name="CreativeMode" value="Player" />
+		<property name="HSUnlockPoi" value="single" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<set xpath="/blocks/block[@name='pipeSmallWallValveSwitch']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='pipeSmallWallValveSwitch']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<append xpath="/blocks/block[@name='pipeSmallWallValveSwitch']">
+		<property name="CreativeMode" value="Player" />
+		<property name="HSUnlockPoi" value="single" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<set xpath="/blocks/block[@name='pipeSmallValve02Switch']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='pipeSmallValve02Switch']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<append xpath="/blocks/block[@name='pipeSmallValve02Switch']">
+		<property name="CreativeMode" value="Player" />
+		<property name="HSUnlockPoi" value="single" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<set xpath="/blocks/block[@name='pipeSmallWallValve02Switch']/property[@name='Class']/@value">HSUnlockButton, HSUnlock</set>
+	<set xpath="/blocks/block[@name='pipeSmallWallValve02Switch']/property[@name='FilterTags']/@value">MC_playerBlocks,SC_electrical</set>
+	<append xpath="/blocks/block[@name='pipeSmallWallValve02Switch']">
+		<property name="CreativeMode" value="Player" />
+		<property name="HSUnlockPoi" value="single" />
+		<property name="RequiredPower" value="1" />
+		<property name="UnlockedBy" value="craftingElectrician" />
+		<property name="DisplayType" value="blockElectrical" />
+		<property name="TakeDelay" value="5" />
+		<property name="EconomicValue" value="50" />
+		<property name="Group" value="Science,TCScience" />
+		<property name="Tags" value="electricianSkill" />
+		<property name="SoundPickup" value="switch_grab" />
+		<property name="SoundPlace" value="switch_place" />
+	</append>
+
+	<!-- Extends copies every property except CreativeMode, so each child needs its own. -->
+	<append xpath="/blocks/block[@name='powerSwitch02']">
+		<property name="CreativeMode" value="Player" />
+	</append>
+	<append xpath="/blocks/block[starts-with(@name,'pipeSmall') and contains(@name,'Switch') and not(property[@name='CreativeMode'])]">
+		<property name="CreativeMode" value="Player" />
+	</append>
+</configs>

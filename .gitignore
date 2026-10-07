@@ -1,0 +1,19 @@
+# Local build paths
+Source/Directory.Build.props
+Source/obj/
+Source/bin/
+*.dll.new
+
+# Local tooling
+.vs/
+*.user
+*.suo
+
+# Packs
+*.rar
+HS_Unlock-v*.zip
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store

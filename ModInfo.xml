@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xml>
+	<Name value="HSUnlock" />
+	<DisplayName value="HS Unlock" />
+	<Description value="Job end doors unlock instead of opening while still locked. OpenOnUnlock in HSUnlockSettings.json also opens them. Locked doors take a lockpick. POI buttons craft and wire like the vanilla switch." />
+	<Author value="Crumb" />
+	<Version value="1.2.1" />
+	<SkipWithAntiCheat value="true" />
+</xml>
