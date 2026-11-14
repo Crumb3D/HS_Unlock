@@ -1,6 +1,6 @@
 # HS_Unlock — game calls
 
-3.2 vs 3.3: `7DaysRef/HS_Unlock_3.2_vs_3.3.md`. Signatures match. No version fork.
+3.2 vs 3.3: `7DaysRef/HS_Unlock_3.2_vs_3.3.md`. Signatures match. No version fork. 3.4 uses the same calls.
 
 ## Inherits
 - `BlockSwitch` (`BlockPowered`)
