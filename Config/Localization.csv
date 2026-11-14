@@ -1,0 +1,4 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,KeepLoaded,english
+HSUnlockLocked,UI,Menu,,,,Locked
+HSUnlockLockedPickable,UI,Menu,,,,Locked (Pickable)
+blockcommand_TEFeatureLockable:pick,UI,Radial,,,,Use Lockpick

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Audio;
 using HarmonyLib;
 using UnityEngine;
@@ -9,6 +10,9 @@ using UnityEngine;
 [HarmonyPatch(typeof(TEFeatureDoor), "OnBlockTriggered")]
 public static class HSUnlockDoorPatch
 {
+    static ulong markedTick;
+    static readonly HashSet<Vector3i> marked = new HashSet<Vector3i>();
+
     static bool Prefix(TEFeatureDoor __instance, BlockTrigger _triggeredBy)
     {
         TileEntityComposite parent = __instance.Parent;
@@ -32,7 +36,10 @@ public static class HSUnlockDoorPatch
 
         if (!locked && sameSwitch)
         {
+            if (JustUnlocked(doorPos))
+                return false;
             lockable.SetLocked(true);
+            HSUnlockLockPick.ClearProgress(doorPos);
             if (__instance.IsOpen())
                 __instance.SetOpen(false, true);
             Manager.BroadcastPlay(doorPos.ToVector3() + Vector3.one * 0.5f, "Misc/locking");
@@ -44,12 +51,61 @@ public static class HSUnlockDoorPatch
             lockable.SetLocked(false);
             if (_triggeredBy != null)
                 HSUnlockDoorLinks.Remember(doorPos, triggerPos);
+            MarkUnlocked(doorPos);
             Manager.BroadcastPlay(doorPos.ToVector3() + Vector3.one * 0.5f, "Misc/unlocking");
-            return HSUnlockSettings.OpenOnUnlock;
+            if (HSUnlockSettings.OpenOnUnlock && !__instance.IsOpen())
+                __instance.SetOpen(true, true);
+            return false;
         }
 
         if (flagged && !HSUnlockSettings.OpenOnUnlock)
             return false;
         return true;
+    }
+
+    static void MarkUnlocked(Vector3i pos)
+    {
+        if (GameTimer.Instance == null)
+            return;
+        ulong tick = GameTimer.Instance.ticks;
+        if (tick != markedTick)
+        {
+            markedTick = tick;
+            marked.Clear();
+        }
+        marked.Add(pos);
+    }
+
+    static bool JustUnlocked(Vector3i pos)
+    {
+        return GameTimer.Instance != null && GameTimer.Instance.ticks == markedTick && marked.Contains(pos);
+    }
+}
+
+[HarmonyPatch(typeof(TEFeatureDoor))]
+public static class HSUnlockDoorPrompt
+{
+    [HarmonyPatch("AllowBlockActivationCommand")]
+    [HarmonyPostfix]
+    static void HideOpenWhenLocked(TEFeatureDoor __instance, ITileEntityFeature _module, System.ReadOnlySpan<char> _commandName, ref bool __result)
+    {
+        if (!__result || !__instance.Equals(_module))
+            return;
+        if (!__instance.CommandIs(_commandName, "open") && !__instance.CommandIs(_commandName, "close"))
+            return;
+        TEFeatureLockable lockable = __instance.Parent != null ? __instance.Parent.GetFeature<TEFeatureLockable>() : null;
+        if (lockable != null && lockable.IsLocked() && !lockable.IsUserAllowed(Platform.PlatformManager.InternalLocalUserIdentifier))
+            __result = false;
+    }
+
+    [HarmonyPatch("GetActivationText")]
+    [HarmonyPostfix]
+    static void LockedPrompt(TEFeatureDoor __instance, string _activateHotkeyMarkup, ref string __result)
+    {
+        TEFeatureLockable lockable = __instance.Parent != null ? __instance.Parent.GetFeature<TEFeatureLockable>() : null;
+        if (lockable == null || !lockable.IsLocked() || lockable.IsUserAllowed(Platform.PlatformManager.InternalLocalUserIdentifier))
+            return;
+        string label = HSUnlockLockPick.CanPick(lockable) ? Localization.Get("HSUnlockLockedPickable") : Localization.Get("HSUnlockLocked");
+        __result = _activateHotkeyMarkup + " " + label;
     }
 }

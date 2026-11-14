@@ -35,6 +35,14 @@ foreach ($n in @("powerSwitch01","pushButtonSwitch01","pushButtonSwitch02","pipe
 }
 if ($blocksXml -notmatch "HSUnlockButton, HSUnlock") { Fail "class must be 'HSUnlockButton, HSUnlock' so Type.GetType finds the mod assembly" } else { Ok "class HSUnlockButton, HSUnlock" }
 
+$loc = Join-Path $Root "Config\Localization.csv"
+if (-not (Test-Path $loc)) { Fail "Config\Localization.csv missing (the game does not load Localization.txt)" }
+else {
+    $locText = Get-Content $loc -Raw
+    if ($locText -notmatch "HSUnlockLockedPickable") { Fail "localization missing HSUnlockLockedPickable" } else { Ok "Locked (Pickable)" }
+    if ($locText -notmatch "HSUnlockLocked,") { Fail "localization missing HSUnlockLocked" } else { Ok "Locked" }
+}
+
 $dll = Join-Path $Root "HSUnlock.dll"
 if (-not (Test-Path $dll)) { Fail "HSUnlock.dll missing" }
 else {

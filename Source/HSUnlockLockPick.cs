@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Audio;
 using HarmonyLib;
 using UnityEngine;
@@ -10,14 +11,18 @@ using UnityEngine;
 public static class HSUnlockLockPick
 {
     const string ItemName = "resourceLockPick";
-    const float PickTime = 15f;
+    const float PickTime = 10f;
     const float BreakChance = 0.75f;
+    const float BreakRewind = 0.5f;
+
+    static readonly Dictionary<Vector3i, float> progress = new Dictionary<Vector3i, float>();
 
     class Job
     {
         public TEFeatureLockable Lock;
         public EntityPlayerLocal Player;
         public Vector3i Pos;
+        public float FullTime;
     }
 
     [HarmonyPatch("InitBlockActivationCommands")]
@@ -54,21 +59,28 @@ public static class HSUnlockLockPick
             return;
         }
         _player.AimingGun = false;
-        float time = EffectManager.GetValue(PassiveEffects.LockPickTime, _player.inventory.holdingItemItemValue, PickTime, _player);
+        float full = EffectManager.GetValue(PassiveEffects.LockPickTime, _player.inventory.holdingItemItemValue, PickTime, _player);
+        if (full < 1f)
+            full = 1f;
+        float done;
+        progress.TryGetValue(_blockPos, out done);
+        if (done < 0f)
+            done = 0f;
+        if (done > full - 0.25f)
+            done = full - 0.25f;
+        float timeLeft = full - done;
         float breakChance = EffectManager.GetValue(PassiveEffects.LockPickBreakChance, _player.inventory.holdingItemItemValue, BreakChance, _player);
-        if (time < 0.5f)
-            time = 0.5f;
         TimerEventData data = new TimerEventData();
-        data.Data = new Job { Lock = __instance, Player = _player, Pos = _blockPos };
+        data.Data = new Job { Lock = __instance, Player = _player, Pos = _blockPos, FullTime = full };
         data.FullTimeFinishEvent += OnSuccess;
         data.CloseEvent += OnClose;
-        if (_player.rand.RandomFloat < breakChance)
+        if (_player.rand.RandomFloat < breakChance && timeLeft > 0.75f)
         {
-            data.AlternateTime = time * _player.rand.RandomRange(0.25f, 0.9f);
+            data.AlternateTime = done + timeLeft * _player.rand.RandomRange(0.2f, 0.85f);
             data.AlternateEvent += OnBreak;
         }
         Manager.BroadcastPlayByLocalPlayer(_blockPos.ToVector3() + Vector3.one * 0.5f, "Misc/unlocking");
-        XUiC_Timer.OpenTimer(ui.xui, time, data, -1f, "", true);
+        XUiC_Timer.OpenTimer(ui.xui, full, data, timeLeft, "", true);
     }
 
     static bool IsDoorWithoutPick(TEFeatureLockable lockable)
@@ -81,7 +93,7 @@ public static class HSUnlockLockPick
         return parent.GetFeature<TEFeatureLockPickable>() == null;
     }
 
-    static bool CanPick(TEFeatureLockable lockable)
+    public static bool CanPick(TEFeatureLockable lockable)
     {
         if (!IsDoorWithoutPick(lockable) || !lockable.IsLocked() || lockable.LocalPlayerIsOwner())
             return false;
@@ -89,6 +101,11 @@ public static class HSUnlockLockPick
         if (world != null && world.GetTraderAreaAt(lockable.ToWorldPos()) != null)
             return false;
         return true;
+    }
+
+    public static void ClearProgress(Vector3i pos)
+    {
+        progress.Remove(pos);
     }
 
     static void TakePick(EntityPlayerLocal player)
@@ -106,6 +123,12 @@ public static class HSUnlockLockPick
         if (job == null || job.Player == null)
             return;
         TakePick(job.Player);
+        float full = job.FullTime > 0f ? job.FullTime : PickTime;
+        float elapsed = data.Completion * full;
+        float kept = elapsed - BreakRewind;
+        if (kept < 0f)
+            kept = 0f;
+        progress[job.Pos] = kept;
         Manager.BroadcastPlayByLocalPlayer(job.Pos.ToVector3() + Vector3.one * 0.5f, "Misc/locked");
         GameManager.ShowTooltip(job.Player, Localization.Get("ttLockpickBroken"));
     }
@@ -116,6 +139,7 @@ public static class HSUnlockLockPick
         if (job == null || job.Lock == null || job.Player == null)
             return;
         TakePick(job.Player);
+        progress.Remove(job.Pos);
         job.Lock.SetLocked(false);
         Manager.BroadcastPlayByLocalPlayer(job.Pos.ToVector3() + Vector3.one * 0.5f, "Misc/unlocking");
         GameManager.ShowTooltip(job.Player, Localization.Get("containerUnlocked"));

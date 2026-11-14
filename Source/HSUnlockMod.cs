@@ -11,7 +11,7 @@ public class HSUnlockMod : IModApi
             return;
         ModPath = _modInstance.Path;
         HSUnlockSettings.Load(ModPath);
-        Log.Out("[HSUnlock] v1.2.1 locked doors unlock, and the same switch locks them again. Open only if HSUnlockSettings.json OpenOnUnlock is true. Lockpick works on locked doors. Install on the host and on every client.");
+        Log.Out("[HSUnlock] v1.2.3 locked doors unlock without moving. The same switch locks them again. OpenOnUnlock also opens a shut door. Lockpick starts at 10s and resumes after a break. Install on the host and on every client.");
         try
         {
             new Harmony("HSUnlock").PatchAll(Assembly.GetExecutingAssembly());
